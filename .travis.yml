@@ -1,0 +1,23 @@
+sudo: required
+language: generic
+services:
+    - docker
+
+before_install:
+    - docker build -t smuraha/docker-fib -f ./client/Dockerfile.dev ./client
+
+script:
+    - docker run -e CI=true smuraha/docker-fib npm test
+
+after_success:
+    - docker build -t smuraha/docker-fib-client ./client
+    - docker build -t smuraha/docker-fib-nginx ./nginx
+    - docker build -t smuraha/docker-fib-server ./server
+    - docker build -t smuraha/docker-fib-worker ./worker
+    # Log in to Docker CLI
+    - echo "$DOCKER_TOKEN" | docker login -u "$DOCKER_ID" --password-stdin
+    # Push images
+    - docker push smuraha/docker-fib-client
+    - docker push smuraha/docker-fib-nginx
+    - docker push smuraha/docker-fib-server
+    - docker push smuraha/docker-fib-worker
