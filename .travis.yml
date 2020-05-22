@@ -23,6 +23,7 @@ after_success:
     - docker push smurahy/docker-fib-worker
 
 deploy:
+    edge: true
     provider: elasticbeanstalk
     region: us-east-1
     app: docker-fib
